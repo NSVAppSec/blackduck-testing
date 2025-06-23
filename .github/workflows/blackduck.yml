@@ -2,6 +2,10 @@ name: blackduck
 on:
   workflow_dispatch:
 
+permissions:
+  contents: read
+  security-events: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -29,6 +33,7 @@ jobs:
           polaris_reports_sarif_issue_types: 'SCA, SAST' 
           polaris_upload_sarif_report: true 
           github_token: ${{ secrets.GITHUB_TOKEN }}
+          coverity_args: --file-exclude-regex 'blackduck.py'
           # coverity_args: --file-exclude-regex '^blackduck\.py$'
       - name: Get IDs
         if: always()
