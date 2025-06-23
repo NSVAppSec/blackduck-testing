@@ -1,0 +1,42 @@
+name: blackduck
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Source
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+      - name: Install dependencies
+        run: pip install -r ./requirements.txt
+      - name: Blackduck Scan
+        uses: blackduck-inc/black-duck-security-scan@v2.0.0
+        with:
+          polaris_server_url: ${{ vars.POLARIS_SERVER_URL }}
+          polaris_access_token: ${{ secrets.POLARIS_ACCESS_TOKEN }}
+          polaris_assessment_types: "SCA,SAST"
+          polaris_application_name: "Renfe Testing"
+          polaris_project_name: "Renfe Java Demo"
+          polaris_reports_sarif_create: true  
+          polaris_reports_sarif_file_path: './report.sarif.json'
+          polaris_reports_sarif_severities: "CRITICAL,HIGH,MEDIUM,LOW"
+          polaris_reports_sarif_groupSCAIssues: true 
+          polaris_reports_sarif_issue_types: 'SCA, SAST' 
+          polaris_upload_sarif_report: true 
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          # coverity_args: --file-exclude-regex '^blackduck\.py$'
+      - name: Get IDs
+        if: always()
+        run: |
+          SAST_ID=$(grep 'uploading artifact for "SAST(sastFull)"' .bridge/bridge.log | awk -F'id "' '{print $2}' | awk -F'"' '{print $1}')
+          SCA_ID=$(grep 'uploading artifact for "SCA(scaPackage)"' .bridge/bridge.log | awk -F'id "' '{print $2}' | awk -F'"' '{print $1}')
+          echo "SAST_ID=${SAST_ID}" >> $GITHUB_ENV
+          echo "SCA_ID=${SCA_ID}" >> $GITHUB_ENV
+      - name: Export result
+        if: always()
+        run: python blackduck.py --token ${{ secrets.POLARIS_ACCESS_TOKEN }} --sca $SCA_ID --sast $SAST_ID
