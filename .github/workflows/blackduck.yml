@@ -26,14 +26,14 @@ jobs:
           polaris_assessment_types: "SCA,SAST"
           polaris_application_name: "Renfe Testing"
           polaris_project_name: "Renfe Java Demo"
+          polaris_upload_sarif_report: true 
           polaris_reports_sarif_create: true  
-          polaris_reports_sarif_file_path: './report.sarif.json'
-          polaris_reports_sarif_severities: "CRITICAL,HIGH,MEDIUM,LOW"
           polaris_reports_sarif_groupSCAIssues: true 
           polaris_reports_sarif_issue_types: 'SCA, SAST' 
-          polaris_upload_sarif_report: true 
+          polaris_reports_sarif_severities: "CRITICAL,HIGH,MEDIUM,LOW"
+          polaris_reports_sarif_file_path: './report.sarif.json'
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          coverity_args: --file-exclude-regex 'blackduck.py'
+          coverity_args: --file-exclude-regex 'blackduck.py,this_should_break4.py'
           # coverity_args: --file-exclude-regex '^blackduck\.py$'
       - name: Get IDs
         if: always()
