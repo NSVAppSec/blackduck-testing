@@ -2,9 +2,9 @@ name: blackduck
 on:
   workflow_dispatch:
 
-permissions:
-  contents: read
-  security-events: write
+# permissions:
+#   contents: read
+#   security-events: write
 
 jobs:
   build:
@@ -26,14 +26,20 @@ jobs:
           polaris_assessment_types: "SCA,SAST"
           polaris_application_name: "Renfe Testing"
           polaris_project_name: "Renfe Java Demo"
-          polaris_upload_sarif_report: true 
+          # polaris_upload_sarif_report: true 
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           polaris_reports_sarif_create: true  
           polaris_reports_sarif_groupSCAIssues: true 
-          polaris_reports_sarif_issue_types: 'SCA, SAST' 
+          # polaris_reports_sarif_issue_types: 'SCA, SAST' 
+          polaris_reports_sarif_issue_types: 'SAST' 
+          polaris_reports_sarif_file_path: './report.sarif'
           polaris_reports_sarif_severities: "CRITICAL,HIGH,MEDIUM,LOW"
-          polaris_reports_sarif_file_path: './report.sarif.json'
-          github_token: ${{ secrets.GITHUB_TOKEN }}
           coverity_args: --file-exclude-regex '^(blackduck\.py|requirements\.txt|\.github/.*)$'
+      - name: Env Info
+        if: always()
+        run: |
+          pwd
+          ls -la
       - name: Get IDs
         if: always()
         run: |

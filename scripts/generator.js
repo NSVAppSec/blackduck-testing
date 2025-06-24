@@ -2,6 +2,8 @@ var fs = require('fs')
 var path = require('path')
 const crypto = require('crypto')
 
+const ADMIN_PASSWORD = 'not an admin password'
+
 const base = {
   Ethereal: { health: 100, attack: 100, defense: 150 },
   Mystic: { health: 150, attack: 150, defense: 200 },
