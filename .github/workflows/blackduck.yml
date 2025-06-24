@@ -33,8 +33,7 @@ jobs:
           polaris_reports_sarif_severities: "CRITICAL,HIGH,MEDIUM,LOW"
           polaris_reports_sarif_file_path: './report.sarif.json'
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          coverity_args: --file-exclude-regex '^(blackduck\.py|requirements\.txt)$'
-          # coverity_args: --file-exclude-regex '^blackduck\.py$'
+          coverity_args: --file-exclude-regex '^(blackduck\.py|requirements\.txt|\.github/.*)$'
       - name: Get IDs
         if: always()
         run: |
